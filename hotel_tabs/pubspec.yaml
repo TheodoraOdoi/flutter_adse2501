@@ -1,0 +1,72 @@
+name: hotel_tabs
+description: "A Flutter project to demonstrate working with tabs."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  intl: ^0.20.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_native_splash: ^2.4.4
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/images/
+    - assets/images/burgers/
+    - assets/images/desserts/
+    - assets/images/drinks/
+    - assets/images/pizzas/
+    - assets/images/salads/
+
+    - assets/fonts/
+
+
+  fonts:
+    - family: caviar
+      fonts:
+        - asset: assets/fonts/caviar_dreams.ttf
+    - family: edge_bold
+      fonts:
+        - asset: assets/fonts/edge_display_bold.otf
+    - family: edge_regular
+      fonts:
+        - asset: assets/fonts/edge_display_regular.otf
+    - family: gvtime
+      fonts:
+        - asset: assets/fonts/gvtimeregular.ttf
+    - family: limelight
+      fonts:
+        - asset: assets/fonts/limelight.ttf
+
+
+flutter_native_splash:
+  color: "#4a148C"
+  fullscreen: true
+  android: true
+  ios: true
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/to/font-from-package
