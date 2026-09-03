@@ -87,10 +87,10 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
         _emailSent = true;
       });
 
-      _showMessage(
-          'If there is an account for this email address, a recovery code has been sent.');
+      _showMessage('If there is an account for this email address, a recovery code has been sent.');
     }
     catch (error) {
+      
       if (!mounted) {
         return;
       }
@@ -276,6 +276,110 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 32.0),
+
+                  if(!showPasswordFields)...[
+                    _buildEmailField(),
+                    const SizedBox(height: 16.0),
+
+                    FilledButton(
+                      onPressed: _isLoading
+                          ? null
+                          : _sendRecoveryEmail,
+                      child: _isLoading
+                          ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                        ),
+                      )
+                          : const Text('Send Recovery Code'),
+                    ),
+                    if(_emailSent)...[
+                      const SizedBox(height: 32.0),
+                      const Text(
+                        'Enter the recovery code sent to your email address',
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16.0),
+
+                      TextField(
+                        controller: _otpController,
+                        keyboardType: TextInputType.number,
+                        maxLength: 8,
+                        textAlign: TextAlign.center,
+                        decoration: const InputDecoration(
+                          labelText: 'Recovery Code',
+                          border: OutlineInputBorder()
+                        ),
+                      ),
+                      const SizedBox(height: 16.0),
+
+                      FilledButton(
+                        onPressed: _isLoading
+                            ? null
+                            : _verifyRecoveryCode,
+                        child: _isLoading
+                            ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                          ),
+                        )
+                            : const Text('Verify Recovery Code'),
+
+                      ),
+                    ],
+                  ],
+
+                  if(showPasswordFields)...[
+                    TextField(
+                      controller: _passwordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        labelText: 'New Password',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.lock_outlined),
+                      ),
+                    ),
+                    const SizedBox(height: 16.0),
+                    TextField(
+                      controller: _confirmPasswordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Confirm Password',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.lock_outlined),
+                      ),
+                    ),
+
+                    const SizedBox(height: 24.0),
+
+                    FilledButton(
+                      onPressed: _isLoading
+                          ? null
+                          : _updatePassword,
+                      child: _isLoading
+                          ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                        ),
+                      )
+                          : const Text('Change Password'),
+                    ),
+                  ],
+
+                  const SizedBox(height: 16.0),
+
+                  TextButton(
+                    onPressed: _isLoading
+                        ? null
+                        : widget.onBackToLogin,
+                    child: const Text('Return to Login'),
+                  ),
                 ],
             ),
           ),
