@@ -232,10 +232,102 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-// ---------------------------------------------------------------------------
-// Pick and upload an avatar
-// ---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // Method to pick and upload an avatar
+  // ---------------------------------------------------------------------------
+  Future<void> _pickAndUploadAvatar() async
+  {
+    final user = _client.auth.currentUser;
 
+    if (user == null)
+    {
+      _showMessage('Your session could not be found. Please sign in again.');
+      return;
+    }
+
+    try
+    {
+      final image = await _imagePicker.pickImage(
+          source: ImageSource.gallery,
+          imageQuality: 85,
+          maxWidth: 1200,
+      );
+
+      if(image == null){return;}
+
+      setState(() {
+        _isUploadingAvatar = true;
+      });
+
+      // Image details
+      final imageFile = File(image.path);
+      final extension = _getImageExtension(image.path);
+      final fileName = 'avatar_${DateTime.now().millisecondsSinceEpoch}.$extension';
+      final storagePath = '${user.id}/$fileName';
+
+      await _client.storage.from('avatars').upload(
+          storagePath,
+          imageFile,
+          fileOptions: FileOptions(cacheControl: '3600', upsert: true)
+      );
+
+      await _client.from('profiles').update({
+        'avatar_url': storagePath,
+        'updated_at': DateTime.now().toUtc().toIso8601String(),
+      }).eq('id', user.id);
+
+      if(!mounted){return;}
+
+      setState(() {
+        _avatarPath = storagePath;
+      });
+
+      _showMessage('Profile photo successfully updated!');
+    }
+    catch (error) {
+      if
+      (!mounted) {return;}
+      _showMessage(getAuthErrorMessage(error));
+    }
+    finally{
+      if(mounted){
+        setState(() {
+          _isUploadingAvatar = false;
+        });
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Method to determine the uploaded image extension
+  // ---------------------------------------------------------------------------
+  String _getImageExtension(String filePath)
+  {
+    final lowerCasePath = filePath.toLowerCase();
+    if(lowerCasePath.endsWith('.png')) {return 'png';}
+    if(lowerCasePath.endsWith('.webp')) {return 'webp';}
+    return 'jpg';
+  }
+
+  // ---------------------------------------------------------------------------
+  // Method to build the avatar image
+  // ---------------------------------------------------------------------------
+  Widget _buildAvatar()
+  {
+    if(_avatarPath == null || _avatarPath!.isEmpty)
+      {
+        return const CircleAvatar(
+          radius: 60,
+          child: Icon(Icons.person_rounded, size: 60.0,),
+        );
+      }
+
+    final avatarUrl = _client.storage
+        .from('avatars')
+        .getPublicUrl(_avatarPath!);
+
+    return CircleAvatar(radius: 60, backgroundImage: NetworkImage(avatarUrl));
+  }
 
   //------------------------------------------
   // User feedback method
@@ -250,7 +342,157 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
+  Widget build(BuildContext context)
+  {
+    if(_isLoading)
+      {
+        return Scaffold(
+          appBar: AppBar(title: const Text('My Profile'),),
+          body: Center(child: CircularProgressIndicator(),),
+        );
+      }
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('My Profile'),),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+                maxWidth: 600,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                //------------------------------------------------------------
+                // Avatar
+                //-----------------------------------------------------------
+                Center(
+                  child: Stack(
+                    alignment: Alignment.bottomRight,
+                    children: [
+                      _buildAvatar(),
+
+                      FloatingActionButton.small(
+                        onPressed: _isUploadingAvatar
+                            ? null
+                            : _pickAndUploadAvatar,
+                        tooltip: 'Change profile photo',
+                        child: _isUploadingAvatar
+                            ? const SizedBox(
+                            height: 18,
+                            width: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2,),
+                        )
+                            : const Icon(Icons.camera_alt_rounded),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 32.0),
+                //-------------------------------------------------------------
+                // Email
+                //-------------------------------------------------------------
+                TextField(
+                  controller: _emailController,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    labelText: 'Email Address',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.email_outlined),
+                  ),
+                ),
+
+                const SizedBox(height: 16.0),
+                //-------------------------------------------------------------
+                // Full Name
+                //-------------------------------------------------------------
+                TextField(
+                  controller: _fullNameController,
+                  decoration: InputDecoration(
+                    labelText: 'Full Name',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.person_rounded),
+                  ),
+                ),
+
+                const SizedBox(height: 16.0),
+                //-------------------------------------------------------------
+                // Student Id
+                //-------------------------------------------------------------
+                TextField(
+                  controller: _studentIdController,
+                  decoration: InputDecoration(
+                    labelText: 'Student ID',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.badge_rounded)
+                  ),
+                  ),
+
+                const SizedBox(height: 16.0),
+                //-------------------------------------------------------------
+                // Programme
+                //-------------------------------------------------------------
+                TextField(
+                  controller: _programmeController,
+                  decoration: InputDecoration(
+                    labelText: 'Programme of study',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.school_outlined)
+                  ),
+                  ),
+
+                const SizedBox(height: 16.0),
+                //-------------------------------------------------------------
+                // Year of study
+                //-------------------------------------------------------------
+                TextField(
+                  controller: _yearOfStudyController,
+                  decoration: InputDecoration(
+                    labelText: 'Year of Study',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.calendar_today_rounded)
+                  ),
+                  ),
+
+                const SizedBox(height: 16.0),
+                //-------------------------------------------------------------
+                // Short Biography
+                //-------------------------------------------------------------
+                TextField(
+                  controller: _bioController,
+                  minLines: 4,
+                  maxLines: 7,
+                  textInputAction: TextInputAction.newline,
+                  decoration: InputDecoration(
+                    labelText: 'Short bio',
+                    alignLabelWithHint: true,
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.notes_outlined)
+                  ),
+                  ),
+
+                const SizedBox(height: 16.0),
+                //-------------------------------------------------------------
+                // Save button
+                //-------------------------------------------------------------
+                FilledButton.icon(
+                  onPressed: _isSaving ? null : _saveProfile,
+                  icon: _isSaving
+                      ? const SizedBox(
+                    height: 18,
+                    width: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2,),
+                  )
+                      : const Icon(Icons.save_rounded),
+                  label: Text(_isSaving ? 'Saving...' : 'Save Profile'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
