@@ -73,22 +73,24 @@ flutter:
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/to/asset-from-package
 
-  # To add custom fonts to your application, add a fonts section here,
-  # in this "flutter" section. Each entry in this list should have a
-  # "family" key with the font family name, and a "fonts" key with a
-  # list giving the asset and other descriptors for the font. For
-  # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
+  # Add custom fonts to our application
+  fonts:
+    - family: caviar
+      fonts:
+        - asset: assets/fonts/caviar_dreams.ttf
+    - family: edge_bold
+      fonts:
+        - asset: assets/fonts/edge_display_bold.otf
+    - family: edge_regular
+      fonts:
+        - asset: assets/fonts/edge_display_regular.otf
+    - family: gvtime
+      fonts:
+        - asset: assets/fonts/gvtimeregular.ttf
+    - family: limelight
+      fonts:
+        - asset: assets/fonts/limelight.ttf
+
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

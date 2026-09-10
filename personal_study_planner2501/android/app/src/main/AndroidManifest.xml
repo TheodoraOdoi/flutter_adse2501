@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<!-- Add internet permission to allow app to access supabase db -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="personal_study_planner2501"
         android:name="${applicationName}"

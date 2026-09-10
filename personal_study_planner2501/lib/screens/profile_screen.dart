@@ -333,7 +333,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // User feedback method
   //------------------------------------------
   void _showMessage(String message)
-  {
+  { 
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
@@ -349,7 +349,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return Scaffold(
           appBar: AppBar(title: const Text('My Profile'),),
           body: Center(child: CircularProgressIndicator(),),
-        );
+        );  
       }
 
     return Scaffold(
